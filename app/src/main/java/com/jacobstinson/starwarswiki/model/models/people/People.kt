@@ -1,4 +1,4 @@
-package com.jacobstinson.starwarswiki.model.people
+package com.jacobstinson.starwarswiki.model.models.people
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
