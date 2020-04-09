@@ -6,6 +6,7 @@ import dagger.android.DaggerApplication
 
 class StarWarsWikiApp: DaggerApplication() {
 
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> =
-        DaggerAppComponent.factory().create(this)
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        return DaggerAppComponent.factory().create(this)
+    }
 }
