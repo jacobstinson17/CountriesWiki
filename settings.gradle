@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='Star Wars Wiki'
+rootProject.name='Countries Wiki'

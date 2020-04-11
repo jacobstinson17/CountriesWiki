@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'com.apollographql.apollo'
 
 android {
     compileSdkVersion 29
@@ -31,6 +32,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    apollo {
+        generateKotlinModels.set(true)
+    }
 }
 
 dependencies {
@@ -55,6 +59,9 @@ dependencies {
 
     //Data Binding
     kapt 'com.android.databinding:baseLibrary:3.6.2'
+
+    //GraphQL
+    implementation 'com.apollographql.apollo:apollo-runtime:1.4.4'
 
     //Kotlin
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

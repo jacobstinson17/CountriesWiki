@@ -1,8 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jacobstinson.starwarswiki">
+    package="com.jacobstinson.countrieswiki">
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".StarWarsWikiApp"
+        android:name="com.jacobstinson.countrieswiki.CountriesWikiApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -10,9 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".view_viewmodel.main.MainActivity"/>
+        <activity android:name="com.jacobstinson.countrieswiki.view_viewmodel.main.MainActivity"/>
 
-        <activity android:name=".view_viewmodel.splash.SplashActivity"
+        <activity android:name="com.jacobstinson.countrieswiki.view_viewmodel.splash.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
