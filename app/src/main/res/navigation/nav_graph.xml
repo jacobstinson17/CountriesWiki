@@ -5,6 +5,6 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.jacobstinson.starwarswiki.view_viewmodel.home.HomeFragment"
+        android:name="com.jacobstinson.countrieswiki.view_viewmodel.home.HomeFragment"
         android:label="HomeFragment" />
 </navigation>
