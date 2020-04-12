@@ -15,37 +15,35 @@ import androidx.lifecycle.MediatorLiveData
  * @param <ResultType>
  * @param <RequestType>
 </RequestType></ResultType> */
-abstract class NetworkBoundResource<ResultType, RequestType> @MainThread constructor(
-    private val appExecutors: AppExecutors
-) {
+abstract class NetworkBoundResource<ResultType, RequestType> @MainThread constructor(private val appExecutors: AppExecutors) {
 
-    /**
-     * The final result LiveData
-     */
+    /**************************
+    * The final result LiveData
+    **************************/
     private val result = MediatorLiveData<Resource<ResultType?>>()
 
     init {
-        // Send loading state to UI
         result.value = Resource.loading(null)
+
         val dbSource = this.loadFromDb()
         result.addSource(dbSource) { data ->
             result.removeSource(dbSource)
+
             if (shouldFetch(data)) {
                 fetchFromNetwork(dbSource)
             } else {
-                result.addSource(dbSource) { newData -> setValue(
-                    Resource.success(
-                        newData
-                    )
-                ) }
+                result.addSource(dbSource) { newData ->
+                    setValue(Resource.success(newData))
+                }
             }
         }
     }
 
-    /**
-     * Fetch the data from network and persist into DB and then
-     * send it back to UI.
-     */
+
+
+    /*************
+    * Main Methods
+    *************/
     private fun fetchFromNetwork(dbSource: LiveData<ResultType>) {
         val apiResponse = createCall()
         // we re-attach dbSource as a new source, it will dispatch its latest value quickly
@@ -62,39 +60,18 @@ abstract class NetworkBoundResource<ResultType, RequestType> @MainThread constru
                             // we specially request a new live data,
                             // otherwise we will get immediately last cached value,
                             // which may not be updated with latest results received from network.
-                            result.addSource(loadFromDb()) { newData -> setValue(
-                                Resource.success(
-                                    newData
-                                )
-                            ) }
+                            result.addSource(loadFromDb()) { newData ->
+                                setValue(Resource.success(newData))
+                            }
                         }
                     }
                 } else {
-                    onFetchFailed()
-                    result.addSource(dbSource) { result.setValue(
-                        Resource.error(
-                            null
-                        )
-                    ) }
+                    result.addSource(dbSource) {
+                        result.setValue(Resource.error(null))
+                    }
                 }
             }
         }
-    }
-
-    @MainThread
-    private fun setValue(newValue: Resource<ResultType?>) {
-        if (result.value != newValue) result.value = newValue
-    }
-
-    protected fun onFetchFailed() {}
-
-    fun asLiveData(): LiveData<Resource<ResultType?>> {
-        return result
-    }
-
-    @WorkerThread
-    private fun processResponse(response: Resource<RequestType>): RequestType? {
-        return response.data
     }
 
     @WorkerThread
@@ -108,4 +85,23 @@ abstract class NetworkBoundResource<ResultType, RequestType> @MainThread constru
 
     @MainThread
     protected abstract fun createCall(): LiveData<Resource<RequestType>>
+
+
+
+    /*************
+    * Util Methods
+    *************/
+    @MainThread
+    private fun setValue(newValue: Resource<ResultType?>) {
+        if (result.value != newValue) result.value = newValue
+    }
+
+    fun asLiveData(): LiveData<Resource<ResultType?>> {
+        return result
+    }
+
+    @WorkerThread
+    private fun processResponse(response: Resource<RequestType>): RequestType? {
+        return response.data
+    }
 }
