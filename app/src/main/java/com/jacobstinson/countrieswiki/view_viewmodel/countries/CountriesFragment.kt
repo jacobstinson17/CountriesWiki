@@ -1,4 +1,4 @@
-package com.jacobstinson.countrieswiki.view_viewmodel.home
+package com.jacobstinson.countrieswiki.view_viewmodel.countries
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,17 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
-import com.apollographql.apollo.ApolloCall
-import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Response
-import com.apollographql.apollo.exception.ApolloException
-import com.jacobstinson.countrieswiki.CountriesQuery
 import com.jacobstinson.countrieswiki.model.CountriesAPIService
 import com.jacobstinson.countrieswiki.model.util.Status
-import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-class HomeFragment @Inject constructor(private val viewModelFactory: ViewModelProvider.Factory): Fragment() {
+class CountriesFragment @Inject constructor(private val viewModelFactory: ViewModelProvider.Factory): Fragment() {
 
 
 

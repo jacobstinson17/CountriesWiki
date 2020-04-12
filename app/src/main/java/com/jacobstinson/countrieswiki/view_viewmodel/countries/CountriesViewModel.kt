@@ -1,4 +1,4 @@
-package com.jacobstinson.countrieswiki.view_viewmodel.home
+package com.jacobstinson.countrieswiki.view_viewmodel.countries
 
 import androidx.lifecycle.ViewModel
 import com.apollographql.apollo.ApolloCall
@@ -9,7 +9,7 @@ import com.jacobstinson.countrieswiki.CountriesQuery
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-class HomeViewModel @Inject constructor(): ViewModel() {
+class CountriesViewModel @Inject constructor(): ViewModel() {
 
     init {
         getCountries()

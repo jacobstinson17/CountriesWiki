@@ -1,0 +1,53 @@
+query GetAllCountries {
+  	countries {
+      code
+      name
+      native
+      phone
+      continent {
+        code
+        name
+      }
+      capital
+      currency
+      languages {
+        code
+        name
+        native
+        rtl
+      }
+      states {
+        code
+        name
+      }
+    }
+}
+
+query GetCountries($continent: String) {
+  	countries(filter: {
+    		continent: {
+        	eq: $continent
+        }
+    }) {
+      code
+      name
+      native
+      phone
+      continent {
+        code
+        name
+      }
+      capital
+      currency
+      languages {
+        code
+        name
+        native
+        rtl
+      }
+      states {
+        code
+        name
+      }
+    }
+}

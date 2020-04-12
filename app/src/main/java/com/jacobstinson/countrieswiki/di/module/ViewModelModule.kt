@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.jacobstinson.countrieswiki.di.factory.MyViewModelFactory
 import com.jacobstinson.countrieswiki.di.qualify.ViewModelKey
-import com.jacobstinson.countrieswiki.view_viewmodel.home.HomeViewModel
+import com.jacobstinson.countrieswiki.view_viewmodel.countries.CountriesViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -17,6 +17,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(HomeViewModel::class)
-    abstract fun bindJokesViewModel(homeViewModel: HomeViewModel): ViewModel
+    @ViewModelKey(CountriesViewModel::class)
+    abstract fun bindJokesViewModel(homeViewModel: CountriesViewModel): ViewModel
 }

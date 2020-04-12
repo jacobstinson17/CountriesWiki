@@ -4,11 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Operation
-import com.apollographql.apollo.api.Query
-import com.apollographql.apollo.api.Response
+import com.apollographql.apollo.api.*
 import com.apollographql.apollo.exception.ApolloException
-import com.jacobstinson.countrieswiki.CountriesQuery
+import com.jacobstinson.countrieswiki.GetAllCountriesQuery
+import com.jacobstinson.countrieswiki.GetCountriesQuery
 import com.jacobstinson.countrieswiki.model.util.Resource
 import okhttp3.OkHttpClient
 
@@ -18,6 +17,7 @@ class CountriesAPIService {
     * Singleton
     **********/
     companion object {
+
         private val INSTANCE by lazy {
             CountriesAPIService()
         }
@@ -32,7 +32,7 @@ class CountriesAPIService {
     /*******
     * Fields
     *******/
-    private val BASE_URL: String = "https://countries.trevorblades.com/"
+    private val baseUrl = "https://countries.trevorblades.com/"
     private val apolloClient = createApolloClient()
 
 
@@ -40,8 +40,12 @@ class CountriesAPIService {
     /**********
     * EndPoints
     **********/
-    fun getCountries(): LiveData<Resource<CountriesQuery.Data>> {
-        return createLiveDataQueryResponse(CountriesQuery())
+    fun getAllCountries(): LiveData<Resource<GetAllCountriesQuery.Data>> {
+        return createLiveDataQueryResponse(GetAllCountriesQuery())
+    }
+
+    fun getCountries(continentCode: String): LiveData<Resource<GetCountriesQuery.Data>> {
+        return createLiveDataQueryResponse(GetCountriesQuery(continentCode.toInput()))
     }
 
 
@@ -60,7 +64,7 @@ class CountriesAPIService {
             .build()
 
         return ApolloClient.builder()
-            .serverUrl(BASE_URL)
+            .serverUrl(baseUrl)
             .okHttpClient(okHttp)
             .build()
     }
