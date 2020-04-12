@@ -51,7 +51,7 @@ class CountriesDaoTest {
             Country("CA", "Canada",  "1", "Ottawa", "CAD", "NA", "North America", Date()))
         myDatabase.countriesDao().save(saveCountries)
 
-        val getCountry = myDatabase.countriesDao().load("CA")
+        val getCountry = myDatabase.countriesDao().loadAll("CA")
         assert(Utils.getValue(getCountry) == saveCountries[0])
     }
 
@@ -66,9 +66,9 @@ class CountriesDaoTest {
             Country("US", "United States", "1", "Washington D.C.", "USD", "NA", "North America", Date()))
         myDatabase.countriesDao().save(saveCountries)
 
-        val loadCountriesSortByCapital = myDatabase.countriesDao().load(sortByField = "capital")
+        val loadCountriesSortByCapital = myDatabase.countriesDao().loadAll(sortByField = "capital")
         assert(Utils.getValue(loadCountriesSortByCapital)[0].capital == saveCountries[1].capital)
-        val loadCountriesSortByCode = myDatabase.countriesDao().load(sortByField = "code", descending = true)
+        val loadCountriesSortByCode = myDatabase.countriesDao().loadAll(sortByField = "code", descending = true)
         assert(Utils.getValue(loadCountriesSortByCode)[1].code == saveCountries[0].code)
     }
 
@@ -78,14 +78,14 @@ class CountriesDaoTest {
             Country("CA", "Canada",  "1", "Ottawa", "CAD", "NA", "North America", Date()))
         myDatabase.countriesDao().save(saveCountries)
 
-        val getCountryPreUpdate = myDatabase.countriesDao().load("CA")
+        val getCountryPreUpdate = myDatabase.countriesDao().loadAll("CA")
         assert(Utils.getValue(getCountryPreUpdate).name == saveCountries[0].name)
 
         saveCountries = listOf(
             Country("CA", "UpdatedCanada",  "1", "Ottawa", "CAD", "NA", "North America", Date()))
         myDatabase.countriesDao().save(saveCountries)
 
-        val getCountryPostUpdate = myDatabase.countriesDao().load("CA")
+        val getCountryPostUpdate = myDatabase.countriesDao().loadAll("CA")
         assert(Utils.getValue(getCountryPostUpdate).name == saveCountries[0].name)
     }
 }

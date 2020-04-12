@@ -54,7 +54,7 @@ class CountriesRepositoryTest {
         //set up mock data
         val dbData = MutableLiveData<List<Country>>()
         dbData.value = dbCountries
-        Mockito.`when`(mockCountriesDao.load()).thenReturn(dbData)
+        Mockito.`when`(mockCountriesDao.loadAll()).thenReturn(dbData)
 
         //call FUT
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
@@ -70,7 +70,7 @@ class CountriesRepositoryTest {
         //set up mock db return value
         val dbData = MutableLiveData<List<Country>>()
         dbData.value = null
-        Mockito.`when`(mockCountriesDao.load()).thenReturn(dbData)
+        Mockito.`when`(mockCountriesDao.loadAll()).thenReturn(dbData)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then {  }
 
         //set up webservice return value
@@ -91,7 +91,7 @@ class CountriesRepositoryTest {
         //set up mock data
         val dbData = MutableLiveData<List<Country>>()
         dbData.value = dbCountries
-        Mockito.`when`(mockCountriesDao.load()).thenReturn(dbData)
+        Mockito.`when`(mockCountriesDao.loadAll()).thenReturn(dbData)
 
         //call FUT
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
@@ -107,7 +107,7 @@ class CountriesRepositoryTest {
         //set up mock db return value
         val dbData = MutableLiveData<List<Country>>()
         dbData.value = null
-        Mockito.`when`(mockCountriesDao.load()).thenReturn(dbData)
+        Mockito.`when`(mockCountriesDao.loadAll()).thenReturn(dbData)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then {  }
 
         //set up webservice return value
@@ -128,7 +128,7 @@ class CountriesRepositoryTest {
         //set up mock data
         val dbData = MutableLiveData<Country>()
         dbData.value = dbCountries[0]
-        Mockito.`when`(mockCountriesDao.load(code = Mockito.anyString())).thenReturn(dbData)
+        Mockito.`when`(mockCountriesDao.loadAll(code = Mockito.anyString())).thenReturn(dbData)
 
         //call FUT
         val observer = MyMockito.mock<Observer<Resource<Country>>>()

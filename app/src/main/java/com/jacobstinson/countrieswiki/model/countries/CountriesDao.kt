@@ -15,8 +15,11 @@ interface CountriesDao {
     fun save(countries: List<Country>)
 
     @Query("SELECT * FROM country WHERE lastRefresh > :lastRefreshMax ORDER BY CASE WHEN :descending = 1 THEN :sortByField END DESC, CASE WHEN :descending = 0 THEN :sortByField END")
-    fun load(lastRefreshMax: Date = RefreshData.getMaxRefreshTime(Date()), sortByField: String = "name", descending: Boolean = false): LiveData<List<Country>>
+    fun loadAllCountries(lastRefreshMax: Date = RefreshData.getMaxRefreshTime(Date()), sortByField: String = "name", descending: Boolean = false): LiveData<List<Country>>
+
+    @Query("SELECT * FROM country WHERE continentCode = :continentCode AND lastRefresh > :lastRefreshMax ORDER BY CASE WHEN :descending = 1 THEN :sortByField END DESC, CASE WHEN :descending = 0 THEN :sortByField END")
+    fun loadContinentCountries(continentCode: String, lastRefreshMax: Date = RefreshData.getMaxRefreshTime(Date()), sortByField: String = "name", descending: Boolean = false): LiveData<List<Country>>
 
     @Query("SELECT * FROM country WHERE code = :code")
-    fun load(code: String): LiveData<Country>
+    fun loadCountry(code: String): LiveData<Country>
 }
