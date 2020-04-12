@@ -18,5 +18,5 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(CountriesViewModel::class)
-    abstract fun bindJokesViewModel(homeViewModel: CountriesViewModel): ViewModel
+    abstract fun bindCountriesViewModel(countriesViewModel: CountriesViewModel): ViewModel
 }

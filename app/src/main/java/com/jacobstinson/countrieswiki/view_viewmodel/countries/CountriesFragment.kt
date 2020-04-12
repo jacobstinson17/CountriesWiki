@@ -20,19 +20,6 @@ class CountriesFragment @Inject constructor(private val viewModelFactory: ViewMo
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        CountriesAPIService.getInstance().getCountries().observe(this) { data ->
-            when(data.status) {
-                Status.SUCCESS -> {
-                    val list = data.data
-                }
-                Status.ERROR -> {
-                    val list = data.data
-                }
-                Status.LOADING -> {
-                    val list = data.data
-                }
-            }
-        }
 
         return super.onCreateView(inflater, container, savedInstanceState)
     }

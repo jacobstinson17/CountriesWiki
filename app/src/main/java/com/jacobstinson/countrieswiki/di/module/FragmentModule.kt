@@ -13,5 +13,5 @@ abstract class FragmentModule {
     @Binds
     @IntoMap
     @FragmentKey(CountriesFragment::class)
-    abstract fun bindJokesFragment(homeFragment: CountriesFragment): Fragment
+    abstract fun bindCountriesFragment(countriesFragment: CountriesFragment): Fragment
 }

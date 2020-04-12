@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.jacobstinson.countrieswiki.model.countries.CountriesDao
 import com.jacobstinson.countrieswiki.model.countries.models.Country
 import com.jacobstinson.countrieswiki.model.util.DateConverter
 
@@ -29,5 +30,5 @@ abstract class MyDatabase: RoomDatabase() {
         }
     }
 
-    /*abstract fun jokesDao(): JokesDao*/
+    abstract fun countriesDao(): CountriesDao
 }
