@@ -5,21 +5,34 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.jacobstinson.countrieswiki.model.countries.models.Country
-import com.jacobstinson.countrieswiki.model.util.RefreshData
 import java.util.*
 
 @Dao
-interface CountriesDao {
+abstract class CountriesDao {
+
     @Insert(onConflict = REPLACE)
-    fun save(countries: List<Country>)
+    abstract fun save(countries: List<Country>)
 
-    @Query("SELECT * FROM country WHERE lastRefresh > :lastRefreshMax ORDER BY CASE WHEN :descending = 1 THEN :sortByField END DESC, CASE WHEN :descending = 0 THEN :sortByField END")
-    fun loadAllCountries(lastRefreshMax: Date = RefreshData.getMaxRefreshTime(Date()), sortByField: String = "name", descending: Boolean = false): LiveData<List<Country>>
+    @Query("SELECT * FROM country WHERE code = :countryCode")
+    abstract fun loadCountry(countryCode: String): LiveData<Country?>
 
-    @Query("SELECT * FROM country WHERE continentCode = :continentCode AND lastRefresh > :lastRefreshMax ORDER BY CASE WHEN :descending = 1 THEN :sortByField END DESC, CASE WHEN :descending = 0 THEN :sortByField END")
-    fun loadContinentCountries(continentCode: String, lastRefreshMax: Date = RefreshData.getMaxRefreshTime(Date()), sortByField: String = "name", descending: Boolean = false): LiveData<List<Country>>
+    @RawQuery(observedEntities = [Country::class])
+    abstract fun loadAllCountriesRawQuery(query: SupportSQLiteQuery): LiveData<List<Country>>
 
-    @Query("SELECT * FROM country WHERE code = :code")
-    fun loadCountry(code: String): LiveData<Country>
+    fun loadCountries(continentCode: String? = null, orderByField: String = "name", descending: Boolean = false, lastRefreshMin: Date = Date(0)): LiveData<List<Country>> {
+        var statement = "SELECT * FROM country WHERE lastRefresh > ${lastRefreshMin.time}"
+        continentCode?.let {
+            statement += " AND continentCode = \'$it\'"
+        }
+        statement += " ORDER BY $orderByField"
+        statement += if(descending) " DESC" else " ASC"
+
+        val query = SimpleSQLiteQuery(statement)
+
+        return loadAllCountriesRawQuery(query)
+    }
 }

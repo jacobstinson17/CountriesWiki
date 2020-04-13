@@ -1,7 +1,6 @@
 package com.jacobstinson.countrieswiki.model.countries
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import com.jacobstinson.countrieswiki.GetAllCountriesQuery
 import com.jacobstinson.countrieswiki.GetCountriesQuery
 import com.jacobstinson.countrieswiki.model.CountriesAPIService
@@ -23,7 +22,7 @@ open class CountriesRepository @Inject constructor(val webService: CountriesAPIS
             return data == null || data.isEmpty() || forceRefresh
         }
         override fun loadFromDb(): LiveData<List<Country>> {
-            return countriesDao.loadAllCountries()
+            return countriesDao.loadCountries()
         }
         override fun createCall(): LiveData<Resource<GetAllCountriesQuery.Data>> {
             return webService.getAllCountries()
@@ -38,20 +37,14 @@ open class CountriesRepository @Inject constructor(val webService: CountriesAPIS
             return data == null || data.isEmpty() || forceRefresh
         }
         override fun loadFromDb(): LiveData<List<Country>> {
-            return countriesDao.loadContinentCountries(continentCode = continentCode)
+            return countriesDao.loadCountries(continentCode = continentCode)
         }
         override fun createCall(): LiveData<Resource<GetCountriesQuery.Data>> {
             return webService.getCountries(continentCode)
         }
     }.asLiveData()
 
-    open fun getCountry(countryCode: String): LiveData<Resource<Country>> {
-        val result = MediatorLiveData<Resource<Country>>()
-
-        result.addSource(countriesDao.loadCountry(countryCode)) { country ->
-            result.value = Resource.success(country)
-        }
-
-        return result
-    }
+//    open fun getCountry(countryCode: String): LiveData<Country> {
+//        return countriesDao.loadCountry(countryCode)
+//    }
 }
