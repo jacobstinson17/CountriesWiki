@@ -7,11 +7,11 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.*
 import com.apollographql.apollo.exception.ApolloException
 import com.jacobstinson.countrieswiki.GetAllCountriesQuery
-import com.jacobstinson.countrieswiki.GetCountriesQuery
+import com.jacobstinson.countrieswiki.GetCountriesByContinentQuery
 import com.jacobstinson.countrieswiki.model.util.Resource
 import okhttp3.OkHttpClient
 
-class CountriesAPIService {
+open class CountriesAPIService {
 
     /**********
     * Singleton
@@ -40,12 +40,12 @@ class CountriesAPIService {
     /**********
     * EndPoints
     **********/
-    fun getAllCountries(): LiveData<Resource<GetAllCountriesQuery.Data>> {
+    open fun getAllCountries(): LiveData<Resource<GetAllCountriesQuery.Data>> {
         return createLiveDataQueryResponse(GetAllCountriesQuery())
     }
 
-    fun getCountries(continentCode: String): LiveData<Resource<GetCountriesQuery.Data>> {
-        return createLiveDataQueryResponse(GetCountriesQuery(continentCode.toInput()))
+    open fun getCountriesByContinent(continentCode: String): LiveData<Resource<GetCountriesByContinentQuery.Data>> {
+        return createLiveDataQueryResponse(GetCountriesByContinentQuery(continentCode.toInput()))
     }
 
 

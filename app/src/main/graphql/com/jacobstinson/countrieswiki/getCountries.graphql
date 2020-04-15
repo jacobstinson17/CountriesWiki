@@ -23,7 +23,7 @@ query GetAllCountries {
     }
 }
 
-query GetCountries($continent: String) {
+query GetCountriesByContinent($continent: String) {
   	countries(filter: {
     		continent: {
         	eq: $continent

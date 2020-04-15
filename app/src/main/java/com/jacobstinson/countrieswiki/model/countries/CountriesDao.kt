@@ -9,7 +9,7 @@ import androidx.room.RawQuery
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.jacobstinson.countrieswiki.model.countries.models.Country
-import java.util.*
+import com.jacobstinson.countrieswiki.model.countries.models.CountryParameters
 
 @Dao
 abstract class CountriesDao {
@@ -21,18 +21,22 @@ abstract class CountriesDao {
     abstract fun loadCountry(countryCode: String): LiveData<Country?>
 
     @RawQuery(observedEntities = [Country::class])
-    abstract fun loadAllCountriesRawQuery(query: SupportSQLiteQuery): LiveData<List<Country>>
+    abstract fun loadCountriesRawQuery(query: SupportSQLiteQuery): LiveData<List<Country>>
 
-    fun loadCountries(continentCode: String? = null, orderByField: String = "name", descending: Boolean = false, lastRefreshMin: Date = Date(0)): LiveData<List<Country>> {
-        var statement = "SELECT * FROM country WHERE lastRefresh > ${lastRefreshMin.time}"
+    open fun loadCountries(parameters: CountryParameters?, continentCode: String? = null): LiveData<List<Country>> {
+        val query = createLoadCountriesQuery(parameters!!, continentCode)
+
+        return loadCountriesRawQuery(query)
+    }
+
+    private fun createLoadCountriesQuery(parameters: CountryParameters, continentCode: String? = null): SimpleSQLiteQuery {
+        var statement = "SELECT * FROM country WHERE lastRefresh > ${parameters.minLastRefreshMs}"
         continentCode?.let {
             statement += " AND continentCode = \'$it\'"
         }
-        statement += " ORDER BY $orderByField"
-        statement += if(descending) " DESC" else " ASC"
+        statement += " ORDER BY ${parameters.orderByField}"
+        statement += if(parameters.isDescending) " DESC" else " ASC"
 
-        val query = SimpleSQLiteQuery(statement)
-
-        return loadAllCountriesRawQuery(query)
+        return SimpleSQLiteQuery(statement)
     }
 }

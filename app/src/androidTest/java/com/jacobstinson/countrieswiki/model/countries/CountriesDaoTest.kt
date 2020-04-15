@@ -7,6 +7,7 @@ import androidx.test.runner.AndroidJUnit4
 import com.jacobstinson.countrieswiki.getLiveDataValue
 import com.jacobstinson.countrieswiki.model.MyDatabase
 import com.jacobstinson.countrieswiki.model.countries.models.Country
+import com.jacobstinson.countrieswiki.model.countries.models.CountryParameters
 import org.junit.*
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
@@ -64,8 +65,7 @@ class CountriesDaoTest {
     private val invalidContinentCode = "UR"
     private val validContinentCodeCountry = Country("ID", "Indonesia", "62", "Jakarta", "IDR", validContinentCode, "Asia", lessRecentDate)
     private val dbCountries = createDbCountries()
-
-
+    private val countryParameters = CountryParameters()
 
     /***********
     * Test Utils
@@ -86,20 +86,20 @@ class CountriesDaoTest {
     //save
     @Test
     fun testSaveCountriesNonEmptyList() {
-        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries()).isEmpty())
+        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters)).isEmpty())
 
         countriesDao.save(dbCountries)
 
-        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries()).isNotEmpty())
+        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters)).isNotEmpty())
     }
 
     @Test
     fun testSaveCountriesEmptyList() {
-        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries()).isEmpty())
+        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters)).isEmpty())
 
         countriesDao.save(emptyList())
 
-        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries()).isEmpty())
+        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters)).isEmpty())
     }
 
     //loadCountry
@@ -117,124 +117,57 @@ class CountriesDaoTest {
         Assert.assertNull(getLiveDataValue(invalidCountryCodeCountry))
     }
 
-    //loadAllCountries
+    //loadCountries
     @Test
     fun testLoadCountriesEmptyDb() {
-        val allCountries = countriesDao.loadCountries()
+        val allCountries = countriesDao.loadCountries(countryParameters)
 
         Assert.assertTrue(getLiveDataValue(allCountries).isEmpty())
     }
 
     @Test
     fun testLoadCountriesSortedByNameAscending() {
-        val allCountries = getLiveDataValue(countriesDao.loadCountries())
+        val allCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters))
 
         Assert.assertThat(dbCountries.sortedBy { country -> country.name }, `is`(allCountries))
     }
 
     @Test
     fun testLoadCountriesSortedByCapitalDescending() {
-        val allCountries = getLiveDataValue(countriesDao.loadCountries(orderByField = "capital", descending = true))
+        countryParameters.orderByField = "capital"
+        countryParameters.isDescending = true
+        val allCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters))
 
         Assert.assertThat(dbCountries.sortedByDescending { country -> country.capital }, `is`(allCountries))
     }
 
     @Test
     fun testLoadCountriesExcludeLessRecentDates() {
-        val moreRecentCountries = getLiveDataValue(countriesDao.loadCountries(lastRefreshMin = Date(1001)))
+        countryParameters.minLastRefreshMs = 1001
+        val moreRecentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters))
 
         Assert.assertThat(dbCountries.filter { country -> country.lastRefresh == moreRecentDate }, `is`(moreRecentCountries))
     }
 
     @Test
     fun testLoadCountriesExcludeLessAndMoreRecentDates() {
-        val noCountries = getLiveDataValue(countriesDao.loadCountries(lastRefreshMin = Date(2001)))
+        countryParameters.minLastRefreshMs = 2001
+        val noCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters))
 
         Assert.assertTrue(noCountries.isEmpty())
     }
 
     @Test
     fun testLoadCountriesByValidContinentCode() {
-        val validContinentCountries = getLiveDataValue(countriesDao.loadCountries(validContinentCode))
+        val validContinentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, validContinentCode))
 
         Assert.assertThat(listOf(validContinentCodeCountry), `is`(validContinentCountries))
     }
 
     @Test
     fun testLoadCountriesByInvalidContinentCode() {
-        val invalidContinentCountries = getLiveDataValue(countriesDao.loadCountries(invalidContinentCode))
+        val invalidContinentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, invalidContinentCode))
 
         Assert.assertTrue(invalidContinentCountries.isEmpty())
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*@Test
-    fun testGetCountry() {
-        val saveCountries = listOf(
-            Country("CA", "Canada",  "1", "Ottawa", "CAD", "NA", "North America", Date()))
-        myDatabase.countriesDao().save(saveCountries)
-
-        val getCountry = myDatabase.countriesDao().loadAll("CA")
-        assert(Utils.getLiveDataValue(getCountry) == saveCountries[0])
-    }
-
-    @Test
-    fun testSaveAndGetCountries() {
-        val saveCountries = listOf(
-            Country("CA", "Canada",  "1", "ZOttawa", "CAD", "NA", "North America", Date()),
-            Country("US", "United States", "1", "Washington D.C.", "USD", "NA", "North America", Date()))
-        myDatabase.countriesDao().save(saveCountries)
-
-        val loadCountriesSortByCapital = myDatabase.countriesDao().loadAll(sortByField = "capital")
-        assert(Utils.getLiveDataValue(loadCountriesSortByCapital)[0].capital == saveCountries[1].capital)
-        val loadCountriesSortByCode = myDatabase.countriesDao().loadAll(sortByField = "code", descending = true)
-        assert(Utils.getLiveDataValue(loadCountriesSortByCode)[1].code == saveCountries[0].code)
-    }
-
-    @Test
-    fun testUpdateCountries() {
-        var saveCountries = listOf(
-            Country("CA", "Canada",  "1", "Ottawa", "CAD", "NA", "North America", Date()))
-        myDatabase.countriesDao().save(saveCountries)
-
-        val getCountryPreUpdate = myDatabase.countriesDao().loadAll("CA")
-        assert(Utils.getLiveDataValue(getCountryPreUpdate).name == saveCountries[0].name)
-
-        saveCountries = listOf(
-            Country("CA", "UpdatedCanada",  "1", "Ottawa", "CAD", "NA", "North America", Date()))
-        myDatabase.countriesDao().save(saveCountries)
-
-        val getCountryPostUpdate = myDatabase.countriesDao().loadAll("CA")
-        assert(Utils.getLiveDataValue(getCountryPostUpdate).name == saveCountries[0].name)
-    }*/
 }
