@@ -15,14 +15,15 @@ class MainActivity: DaggerAppCompatActivity() {
     }
 
     private val appBarConfiguration by lazy {
-        AppBarConfiguration(setOf(R.id.homeFragment))
+        val fragments = setOf(R.id.homeFragment)
+        AppBarConfiguration(fragments)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
 }

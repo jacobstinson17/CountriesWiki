@@ -14,7 +14,6 @@ class DatabaseModule {
         return MyDatabase.getAppDatabase(application)!!
     }
 
-    //place DAOs here
     @Provides
     fun providesCountriesDao(myDatabase: MyDatabase): CountriesDao {
         return myDatabase.countriesDao()

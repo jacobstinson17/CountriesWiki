@@ -1,14 +1,9 @@
 package com.jacobstinson.countrieswiki.model.util
 
-import java.util.*
-
 object RefreshData {
-    private const val FRESH_TIMEOUT_IN_DAYS = 30
+    private const val THIRTY_DAYS_IN_MS = 1000L * 60L * 60L * 24L * 30L
 
-    fun getMinRefreshTime(): Date {
-        val cal = Calendar.getInstance()
-        cal.time = Date(System.currentTimeMillis())
-        cal.add(Calendar.DAY_OF_YEAR, -FRESH_TIMEOUT_IN_DAYS)
-        return cal.time
+    fun getMinRefreshMs(): Long {
+        return System.currentTimeMillis() - THIRTY_DAYS_IN_MS
     }
 }

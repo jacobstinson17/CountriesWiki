@@ -5,21 +5,8 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 
-/**
- * A generic class that can provide a resource backed by both the sqlite database and the network.
- *
- *
- * You can read more about it in the [Architecture
- * Guide](https://developer.android.com/arch).
- *
- * @param <ResultType>
- * @param <RequestType>
-</RequestType></ResultType> */
 abstract class NetworkBoundResource<ResultType, RequestType> @MainThread constructor(private val appExecutors: AppExecutors) {
 
-    /**************************
-    * The final result LiveData
-    **************************/
     private val result = MediatorLiveData<Resource<ResultType?>>()
 
     init {
@@ -45,30 +32,39 @@ abstract class NetworkBoundResource<ResultType, RequestType> @MainThread constru
     * Main Methods
     *************/
     private fun fetchFromNetwork(dbSource: LiveData<ResultType>) {
-        val apiResponse = createCall()
         // we re-attach dbSource as a new source, it will dispatch its latest value quickly
-        result.addSource(dbSource) { result.setValue(Resource.loading(null)) }
+        result.addSource(dbSource) {
+            result.setValue(Resource.loading(null))
+        }
+
+        val apiResponse = createCall()
         result.addSource(apiResponse) { response ->
             result.removeSource(apiResponse)
             result.removeSource(dbSource)
 
             response?.apply {
                 if (status == Status.SUCCESS) {
-                    appExecutors.diskIO().execute {
-                        processResponse(this)?.let { requestType -> saveCallResult(requestType) }
-                        appExecutors.mainThread().execute {
-                            // we specially request a new live data,
-                            // otherwise we will get immediately last cached value,
-                            // which may not be updated with latest results received from network.
-                            result.addSource(loadFromDb()) { newData ->
-                                setValue(Resource.success(newData))
-                            }
-                        }
-                    }
+                    saveResponseAndLoadFromDb(this)
                 } else {
                     result.addSource(dbSource) {
                         result.setValue(Resource.error(null))
                     }
+                }
+            }
+        }
+    }
+
+    private fun saveResponseAndLoadFromDb(response: Resource<RequestType>) {
+        appExecutors.diskIO().execute {
+            processResponse(response)?.let { requestType ->
+                saveCallResult(requestType)
+            }
+            appExecutors.mainThread().execute {
+                /* we specially request a new live data,
+                otherwise we will get immediately last cached value,
+                which may not be updated with latest results received from network. */
+                result.addSource(loadFromDb()) { newData ->
+                    setValue(Resource.success(newData))
                 }
             }
         }

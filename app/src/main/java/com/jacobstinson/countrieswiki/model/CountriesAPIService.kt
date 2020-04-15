@@ -9,42 +9,20 @@ import com.apollographql.apollo.exception.ApolloException
 import com.jacobstinson.countrieswiki.GetAllCountriesQuery
 import com.jacobstinson.countrieswiki.GetCountriesByContinentQuery
 import com.jacobstinson.countrieswiki.model.util.Resource
-import okhttp3.OkHttpClient
+import com.jacobstinson.countrieswiki.testing.MyMockable
+import javax.inject.Inject
 
-open class CountriesAPIService {
-
-    /**********
-    * Singleton
-    **********/
-    companion object {
-
-        private val INSTANCE by lazy {
-            CountriesAPIService()
-        }
-
-        fun getInstance(): CountriesAPIService {
-            return INSTANCE
-        }
-    }
-
-
-
-    /*******
-    * Fields
-    *******/
-    private val baseUrl = "https://countries.trevorblades.com/"
-    private val apolloClient = createApolloClient()
-
-
+@MyMockable
+class CountriesAPIService @Inject constructor(val apolloClient: ApolloClient) {
 
     /**********
     * EndPoints
     **********/
-    open fun getAllCountries(): LiveData<Resource<GetAllCountriesQuery.Data>> {
+    fun getAllCountries(): LiveData<Resource<GetAllCountriesQuery.Data>> {
         return createLiveDataQueryResponse(GetAllCountriesQuery())
     }
 
-    open fun getCountriesByContinent(continentCode: String): LiveData<Resource<GetCountriesByContinentQuery.Data>> {
+    fun getCountriesByContinent(continentCode: String): LiveData<Resource<GetCountriesByContinentQuery.Data>> {
         return createLiveDataQueryResponse(GetCountriesByContinentQuery(continentCode.toInput()))
     }
 
@@ -53,22 +31,6 @@ open class CountriesAPIService {
     /****************
     * Private Methods
     ****************/
-    private fun createApolloClient(): ApolloClient {
-        val okHttp = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val original = chain.request()
-                val builder = original.newBuilder().method(original.method(),
-                    original.body())
-                chain.proceed(builder.build())
-            }
-            .build()
-
-        return ApolloClient.builder()
-            .serverUrl(baseUrl)
-            .okHttpClient(okHttp)
-            .build()
-    }
-
     private fun <D : Operation.Data, T, V : Operation.Variables> createLiveDataQueryResponse(query: Query<D, T, V>): LiveData<Resource<T>> {
         val liveData = MutableLiveData<Resource<T>>()
         liveData.value = Resource.loading(null)

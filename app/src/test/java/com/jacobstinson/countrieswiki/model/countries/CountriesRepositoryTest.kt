@@ -45,8 +45,8 @@ class CountriesRepositoryTest {
     /************
     * Test Fields
     ************/
-    private val lessRecentDate = Date(1000)
-    private val moreRecentDate = Date(2000)
+    private val lessRecentDate = 1000L
+    private val moreRecentDate = 2000L
     private val continentCode = "ID"
     private val countryCode = "US"
     private val countryCodeCountry = Country(countryCode, "United States", "1", "Washington D.C.", "USD", "NA", "North America", lessRecentDate)
@@ -85,13 +85,13 @@ class CountriesRepositoryTest {
     //getAllCountries
     @Test
     fun testGetAllCountriesFromDatabase() {
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(dbCountries)
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(dbCountries)
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         countriesRepo.getAllCountries(CountryParameters(), false).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, Mockito.never()).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(1)).loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
+        Mockito.verify(mockCountriesDao, times(1)).loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
         Mockito.verify(mockWebService, Mockito.never()).getAllCountries()
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }
@@ -100,13 +100,13 @@ class CountriesRepositoryTest {
     fun testGetAllCountriesFromNetworkDataNull() {
         Mockito.`when`(mockWebService.getAllCountries()).thenReturn(wsCountries)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then { }
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(MutableLiveData(null))
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(MutableLiveData(null))
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         countriesRepo.getAllCountries(CountryParameters(), false).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, times(1)).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(2)).loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
+        Mockito.verify(mockCountriesDao, times(2)).loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
         Mockito.verify(mockWebService, times(1)).getAllCountries()
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }
@@ -115,13 +115,13 @@ class CountriesRepositoryTest {
     fun testGetAllCountriesFromNetworkDataEmpty() {
         Mockito.`when`(mockWebService.getAllCountries()).thenReturn(wsCountries)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then { }
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(MutableLiveData(emptyList()))
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(MutableLiveData(emptyList()))
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         countriesRepo.getAllCountries(CountryParameters(), false).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, times(1)).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(2)).loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
+        Mockito.verify(mockCountriesDao, times(2)).loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
         Mockito.verify(mockWebService, times(1)).getAllCountries()
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }
@@ -130,13 +130,13 @@ class CountriesRepositoryTest {
     fun testGetAllCountriesFromNetworkForceRefresh() {
         Mockito.`when`(mockWebService.getAllCountries()).thenReturn(wsCountries)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then { }
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(dbCountries)
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(dbCountries)
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         countriesRepo.getAllCountries(CountryParameters(), true).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, times(1)).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(2)).loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
+        Mockito.verify(mockCountriesDao, times(2)).loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
         Mockito.verify(mockWebService, times(1)).getAllCountries()
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }
@@ -145,15 +145,15 @@ class CountriesRepositoryTest {
     fun testGetAllCountriesFromNetworkHasOutdatedData() {
         Mockito.`when`(mockWebService.getAllCountries()).thenReturn(wsCountries)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then { }
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(dbCountries)
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())).thenReturn(dbCountries)
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         val countryParameters = CountryParameters()
-        countryParameters.minLastRefreshMs = moreRecentDate.time + 1
+        countryParameters.minLastRefreshMs = moreRecentDate + 1
         countriesRepo.getAllCountries(countryParameters, false).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, times(1)).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(2)).loadCountries(Mockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
+        Mockito.verify(mockCountriesDao, times(2)).loadCountries(MyMockito.any(CountryParameters::class.java), ArgumentMatchers.isNull())
         Mockito.verify(mockWebService, times(1)).getAllCountries()
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }
@@ -161,13 +161,13 @@ class CountriesRepositoryTest {
     //getCountriesByContinent
     @Test
     fun testGetCountriesByContinentFromDatabase() {
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(dbContinentCodeCountries)
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(dbContinentCodeCountries)
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         countriesRepo.getCountriesByContinent(CountryParameters(), continentCode, false).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, Mockito.never()).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(1)).loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())
+        Mockito.verify(mockCountriesDao, times(1)).loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())
         Mockito.verify(mockWebService, Mockito.never()).getCountriesByContinent( Mockito.anyString())
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }
@@ -176,13 +176,13 @@ class CountriesRepositoryTest {
     fun testGetCountriesByContinentFromNetworkDataNull() {
         Mockito.`when`(mockWebService.getCountriesByContinent(Mockito.anyString())).thenReturn(wsContinentCodeCountries)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then { }
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(MutableLiveData(null))
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(MutableLiveData(null))
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         countriesRepo.getCountriesByContinent(CountryParameters(), continentCode, false).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, times(1)).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(2)).loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())
+        Mockito.verify(mockCountriesDao, times(2)).loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())
         Mockito.verify(mockWebService, times(1)).getCountriesByContinent(Mockito.anyString())
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }
@@ -191,13 +191,13 @@ class CountriesRepositoryTest {
     fun testGetCountriesByContinentFromNetworkDataEmpty() {
         Mockito.`when`(mockWebService.getCountriesByContinent(Mockito.anyString())).thenReturn(wsContinentCodeCountries)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then { }
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(MutableLiveData(emptyList()))
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(MutableLiveData(emptyList()))
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         countriesRepo.getCountriesByContinent(CountryParameters(), continentCode, false).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, times(1)).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(2)).loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())
+        Mockito.verify(mockCountriesDao, times(2)).loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())
         Mockito.verify(mockWebService, times(1)).getCountriesByContinent(Mockito.anyString())
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }
@@ -206,13 +206,13 @@ class CountriesRepositoryTest {
     fun testGetCountriesByContinentFromNetworkForceRefresh() {
         Mockito.`when`(mockWebService.getCountriesByContinent(Mockito.anyString())).thenReturn(wsContinentCodeCountries)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then { }
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(dbContinentCodeCountries)
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(dbContinentCodeCountries)
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         countriesRepo.getCountriesByContinent(CountryParameters(), continentCode, true).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, times(1)).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(2)).loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())
+        Mockito.verify(mockCountriesDao, times(2)).loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())
         Mockito.verify(mockWebService, times(1)).getCountriesByContinent(Mockito.anyString())
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }
@@ -221,15 +221,15 @@ class CountriesRepositoryTest {
     fun testGetCountriesByContinentFromNetworkHasOutdatedData() {
         Mockito.`when`(mockWebService.getCountriesByContinent(Mockito.anyString())).thenReturn(wsContinentCodeCountries)
         Mockito.`when`(mockCountriesDao.save(MyMockito.anyObject())).then { }
-        Mockito.`when`(mockCountriesDao.loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(dbContinentCodeCountries)
+        Mockito.`when`(mockCountriesDao.loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())).thenReturn(dbContinentCodeCountries)
 
         val observer = MyMockito.mock<Observer<Resource<List<Country>?>>>()
         val countryParameters = CountryParameters()
-        countryParameters.minLastRefreshMs = moreRecentDate.time + 1
+        countryParameters.minLastRefreshMs = moreRecentDate + 1
         countriesRepo.getCountriesByContinent(countryParameters, continentCode, true).observeForever(observer)
 
         Mockito.verify(mockCountriesDao, times(1)).save(MyMockito.anyObject())
-        Mockito.verify(mockCountriesDao, times(2)).loadCountries(Mockito.any(CountryParameters::class.java), Mockito.anyString())
+        Mockito.verify(mockCountriesDao, times(2)).loadCountries(MyMockito.any(CountryParameters::class.java), Mockito.anyString())
         Mockito.verify(mockWebService, times(1)).getCountriesByContinent(Mockito.anyString())
         Mockito.verify(observer).onChanged(Resource.success(MyMockito.anyObject()))
     }

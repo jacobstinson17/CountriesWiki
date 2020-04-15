@@ -1,6 +1,7 @@
 package com.jacobstinson.countrieswiki.model.countries.models
 
-open class CountryParameters(var orderByField: String = DEFAULT_ORDER_BY_FIELD, var isDescending: Boolean = DEFAULT_IS_DESCENDING, var minLastRefreshMs: Long = DEFAULT_MIN_LAST_REFRESH_MS) {
+class CountryParameters(var orderByField: String = DEFAULT_ORDER_BY_FIELD, var isDescending: Boolean = DEFAULT_IS_DESCENDING,
+                        var minLastRefreshMs: Long = DEFAULT_MIN_LAST_REFRESH_MS) {
 
     companion object {
         const val DEFAULT_ORDER_BY_FIELD = "name"

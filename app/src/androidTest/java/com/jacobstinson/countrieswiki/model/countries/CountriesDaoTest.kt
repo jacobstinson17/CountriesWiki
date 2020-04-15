@@ -56,8 +56,8 @@ class CountriesDaoTest {
     /************
     * Test Fields
     ************/
-    private val lessRecentDate = Date(1000)
-    private val moreRecentDate = Date(2000)
+    private val lessRecentDate = 1000L
+    private val moreRecentDate = 2000L
     private val validCountryCode = "CA"
     private val invalidCountryCode = "FR"
     private val validCountryCodeCountry = Country(validCountryCode, "Canada",  "1", "Ottawa", "CAD", "NA", "North America", moreRecentDate)
@@ -146,7 +146,7 @@ class CountriesDaoTest {
         countryParameters.minLastRefreshMs = 1001
         val moreRecentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters))
 
-        Assert.assertThat(dbCountries.filter { country -> country.lastRefresh == moreRecentDate }, `is`(moreRecentCountries))
+        Assert.assertThat(dbCountries.filter { country -> country.lastRefreshMs == moreRecentDate }, `is`(moreRecentCountries))
     }
 
     @Test
