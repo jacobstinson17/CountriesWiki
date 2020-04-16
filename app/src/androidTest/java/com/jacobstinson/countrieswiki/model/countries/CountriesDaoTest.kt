@@ -86,20 +86,20 @@ class CountriesDaoTest {
     //save
     @Test
     fun testSaveCountriesNonEmptyList() {
-        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters)).isEmpty())
+        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters, 0)).isEmpty())
 
         countriesDao.save(dbCountries)
 
-        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters)).isNotEmpty())
+        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters, 0)).isNotEmpty())
     }
 
     @Test
     fun testSaveCountriesEmptyList() {
-        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters)).isEmpty())
+        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters, 0)).isEmpty())
 
         countriesDao.save(emptyList())
 
-        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters)).isEmpty())
+        Assert.assertTrue(getLiveDataValue(countriesDao.loadCountries(countryParameters, 0)).isEmpty())
     }
 
     //loadCountry
@@ -120,14 +120,14 @@ class CountriesDaoTest {
     //loadCountries
     @Test
     fun testLoadCountriesEmptyDb() {
-        val allCountries = countriesDao.loadCountries(countryParameters)
+        val allCountries = countriesDao.loadCountries(countryParameters, 0)
 
         Assert.assertTrue(getLiveDataValue(allCountries).isEmpty())
     }
 
     @Test
     fun testLoadCountriesSortedByNameAscending() {
-        val allCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters))
+        val allCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, 0))
 
         Assert.assertThat(dbCountries.sortedBy { country -> country.name }, `is`(allCountries))
     }
@@ -136,37 +136,35 @@ class CountriesDaoTest {
     fun testLoadCountriesSortedByCapitalDescending() {
         countryParameters.orderByField = "capital"
         countryParameters.isDescending = true
-        val allCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters))
+        val allCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, 0))
 
         Assert.assertThat(dbCountries.sortedByDescending { country -> country.capital }, `is`(allCountries))
     }
 
     @Test
     fun testLoadCountriesExcludeLessRecentDates() {
-        countryParameters.minLastRefreshMs = 1001
-        val moreRecentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters))
+        val moreRecentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, 1001))
 
         Assert.assertThat(dbCountries.filter { country -> country.lastRefreshMs == moreRecentDate }, `is`(moreRecentCountries))
     }
 
     @Test
     fun testLoadCountriesExcludeLessAndMoreRecentDates() {
-        countryParameters.minLastRefreshMs = 2001
-        val noCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters))
+        val noCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, 2001))
 
         Assert.assertTrue(noCountries.isEmpty())
     }
 
     @Test
     fun testLoadCountriesByValidContinentCode() {
-        val validContinentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, validContinentCode))
+        val validContinentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, 0, validContinentCode))
 
         Assert.assertThat(listOf(validContinentCodeCountry), `is`(validContinentCountries))
     }
 
     @Test
     fun testLoadCountriesByInvalidContinentCode() {
-        val invalidContinentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, invalidContinentCode))
+        val invalidContinentCountries = getLiveDataValue(countriesDao.loadCountries(countryParameters, 0, invalidContinentCode))
 
         Assert.assertTrue(invalidContinentCountries.isEmpty())
     }

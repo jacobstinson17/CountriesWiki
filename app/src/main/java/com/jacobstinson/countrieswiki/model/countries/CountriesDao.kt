@@ -22,16 +22,13 @@ abstract class CountriesDao {
     @Query("SELECT * FROM country WHERE code = :countryCode")
     abstract fun loadCountry(countryCode: String): LiveData<Country?>
 
-    @RawQuery(observedEntities = [Country::class])
-    abstract fun loadCountriesRawQuery(query: SupportSQLiteQuery): LiveData<List<Country>>
-
-    fun loadCountries(parameters: CountryParameters, continentCode: String? = null): LiveData<List<Country>> {
-        val query = createLoadCountriesQuery(parameters, continentCode)
+    fun loadCountries(parameters: CountryParameters, minLastRefreshMs: Long, continentCode: String? = null): LiveData<List<Country>> {
+        val query = createLoadCountriesQuery(parameters, minLastRefreshMs, continentCode)
         return loadCountriesRawQuery(query)
     }
 
-    private fun createLoadCountriesQuery(parameters: CountryParameters, continentCode: String? = null): SimpleSQLiteQuery {
-        var statement = "SELECT * FROM country WHERE lastRefreshMs > ${parameters.minLastRefreshMs}"
+    private fun createLoadCountriesQuery(parameters: CountryParameters, minLastRefreshMs: Long, continentCode: String? = null): SimpleSQLiteQuery {
+        var statement = "SELECT * FROM country WHERE lastRefreshMs >= $minLastRefreshMs"
         continentCode?.let {
             statement += " AND continentCode = \'$it\'"
         }
@@ -40,4 +37,7 @@ abstract class CountriesDao {
 
         return SimpleSQLiteQuery(statement)
     }
+
+    @RawQuery(observedEntities = [Country::class])
+    abstract fun loadCountriesRawQuery(query: SupportSQLiteQuery): LiveData<List<Country>>
 }

@@ -14,11 +14,6 @@ class WebServiceModule {
     private val baseUrl = "https://countries.trevorblades.com/"
 
     @Provides
-    fun providesExecutor(): Executor {
-        return Executors.newFixedThreadPool(5)
-    }
-
-    @Provides
     fun providesCountriesAPIService(apolloClient: ApolloClient): CountriesAPIService {
         return CountriesAPIService(apolloClient)
     }
@@ -36,5 +31,10 @@ class WebServiceModule {
             .serverUrl(baseUrl)
             .okHttpClient(okHttp)
             .build()
+    }
+
+    @Provides
+    fun providesExecutor(): Executor {
+        return Executors.newFixedThreadPool(5)
     }
 }
