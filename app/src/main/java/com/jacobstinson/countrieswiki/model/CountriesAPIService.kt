@@ -33,7 +33,6 @@ class CountriesAPIService @Inject constructor(val apolloClient: ApolloClient) {
     ****************/
     private fun <D : Operation.Data, T, V : Operation.Variables> createLiveDataQueryResponse(query: Query<D, T, V>): LiveData<Resource<T>> {
         val liveData = MutableLiveData<Resource<T>>()
-        liveData.value = Resource.loading(null)
 
         apolloClient.query(query).enqueue(object: ApolloCall.Callback<T>() {
             override fun onResponse(response: Response<T>) {

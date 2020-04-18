@@ -15,7 +15,7 @@ class MainActivity: DaggerAppCompatActivity() {
     }
 
     private val appBarConfiguration by lazy {
-        val fragments = setOf(R.id.homeFragment)
+        val fragments = setOf(R.id.countriesFragment)
         AppBarConfiguration(fragments)
     }
 

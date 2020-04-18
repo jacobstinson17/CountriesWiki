@@ -1,3 +1,61 @@
 <resources>
     <string name="app_name">Countries Wiki</string>
+
+    <!-- Continents -->
+    <string name="continent_name_all">All</string>
+    <string-array name="array_continent_names">
+        <item>@string/continent_name_africa</item>
+        <item>@string/continent_name_antarctica</item>
+        <item>@string/continent_name_asia</item>
+        <item>@string/continent_name_oceania</item>
+        <item>@string/continent_name_europe</item>
+        <item>@string/continent_name_north_america</item>
+        <item>@string/continent_name_south_america</item>
+    </string-array>
+    <string name="continent_name_africa">Africa</string>
+    <string name="continent_name_antarctica">Antarctica</string>
+    <string name="continent_name_asia">Asia</string>
+    <string name="continent_name_europe">Europe</string>
+    <string name="continent_name_north_america">North America</string>
+    <string name="continent_name_oceania">Oceania</string>
+    <string name="continent_name_south_america">South America</string>
+
+    <string-array name="array_continent_codes">
+        <item><!-- Left empty so the array directly maps to tab positions--></item>
+        <item>@string/continent_code_africa</item>
+        <item>@string/continent_code_antarctica</item>
+        <item>@string/continent_code_asia</item>
+        <item>@string/continent_code_europe</item>
+        <item>@string/continent_code_north_america</item>
+        <item>@string/continent_code_oceania</item>
+        <item>@string/continent_code_south_america</item>
+    </string-array>
+    <string name="continent_code_africa">AF</string>
+    <string name="continent_code_antarctica">AN</string>
+    <string name="continent_code_asia">AS</string>
+    <string name="continent_code_europe">EU</string>
+    <string name="continent_code_north_america">NA</string>
+    <string name="continent_code_oceania">OC</string>
+    <string name="continent_code_south_america">SA</string>
+
+    <!-- Country Sort By Fields-->
+    <string-array name="array_sort_by_fields">
+        <item>@string/sort_by_name</item>
+        <item>@string/sort_by_capital</item>
+        <item>@string/sort_by_code</item>
+        <item>@string/sort_by_currency</item>
+        <item>@string/sort_by_phone</item>
+    </string-array>
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_capital">Capital</string>
+    <string name="sort_by_code">Code</string>
+    <string name="sort_by_currency">Currency</string>
+    <string name="sort_by_phone">Phone</string>
+
+    <!-- Menus -->
+    <string name="menu_title_sort">Sort</string>
+    <string name="menu_title_direction">Ascending/Descending</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_title_sort">@string/menu_title_sort</string>
 </resources>

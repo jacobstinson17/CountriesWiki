@@ -1,8 +1,6 @@
 package com.jacobstinson.countrieswiki.view_viewmodel.countries
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.jacobstinson.countrieswiki.model.countries.CountriesRepository
 import com.jacobstinson.countrieswiki.model.countries.models.Country
 import com.jacobstinson.countrieswiki.model.countries.models.CountryParameters
@@ -11,15 +9,40 @@ import javax.inject.Inject
 
 class CountriesViewModel @Inject constructor(private val countriesRepo: CountriesRepository): ViewModel() {
 
-    val countryParameters: LiveData<CountryParameters> = MutableLiveData(CountryParameters())
-    val continentCode: LiveData<String> = MutableLiveData<String>("")
+    var orderByField = CountryParameters.DEFAULT_ORDER_BY_FIELD
+        set(value) {
+            field = value.toLowerCase()
+        }
+    val isDescending = MutableLiveData(CountryParameters.DEFAULT_IS_DESCENDING)
+    val continentCode = MutableLiveData("")
+    val countries = MediatorLiveData<Resource<List<Country>?>>()
+    var countriesDataSource: LiveData<Resource<List<Country>?>> = MediatorLiveData<Resource<List<Country>?>>()
 
-
-    fun getAllCountries(forceRefresh: Boolean): LiveData<Resource<List<Country>?>> {
-        return countriesRepo.getAllCountries(countryParameters.value!!, forceRefresh)
+    init {
+        refresh(false)
     }
 
-    fun getCountriesByContinent(forceRefresh: Boolean): LiveData<Resource<List<Country>?>> {
-        return countriesRepo.getCountriesByContinent(countryParameters.value!!, continentCode.value!!, forceRefresh)
+    fun reverseSortDirection() {
+        isDescending.value = !( isDescending.value!! )
+    }
+
+    fun refresh(forceRefresh: Boolean) {
+        countries.removeSource(countriesDataSource)
+
+        countriesDataSource = getCountries(forceRefresh)
+
+        countries.addSource(countriesDataSource) { dataSource ->
+            countries.value = dataSource
+        }
+    }
+
+    private fun getCountries(forceRefresh: Boolean): LiveData<Resource<List<Country>?>> {
+        val countryParameters = CountryParameters(orderByField, isDescending.value!!)
+
+        return if(continentCode.value == "") {
+            countriesRepo.getAllCountries(countryParameters, forceRefresh)
+        } else {
+            countriesRepo.getCountriesByContinent(countryParameters, continentCode.value!!, forceRefresh)
+        }
     }
 }

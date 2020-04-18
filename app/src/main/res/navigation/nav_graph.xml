@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    android:label="Countries"
+    app:startDestination="@id/countriesFragment">
 
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/countriesFragment"
         android:name="com.jacobstinson.countrieswiki.view_viewmodel.countries.CountriesFragment"
-        android:label="HomeFragment" />
+        android:label="Countries" />
 </navigation>
